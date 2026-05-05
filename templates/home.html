@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Available Study Rooms</h2>
+
+<div class="row">
+  {% for room in rooms %}
+    <div class="col-md-4">
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ room.room_name }}</h5>
+          <p class="card-text">
+            Location: {{ room.location }}<br>
+            Capacity: {{ room.capacity }}
+          </p>
+
+          <a href="/book/" class="btn btn-primary">Book</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
