@@ -7,6 +7,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegisterForm
 from django.contrib.auth.decorators import login_required
 from .models import Booking
+from django.shortcuts import get_object_or_404
+
 
 
 
@@ -34,7 +36,7 @@ def book_room(request):
             booking.save()
 
             messages.success(request, "Room booked successfully!")
-            return redirect('home')
+            return redirect('my_bookings')
 
         except Exception as e:
             messages.error(request, str(e))
@@ -73,12 +75,19 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-# @login_required
-# def my_bookings(request):
-#     print("THIS IS MY BOOKINGS VIEW")  # 👈 ADD THIS
+@login_required
+def my_bookings(request):
+    # print("THIS IS MY BOOKINGS VIEW")  # 👈 ADD THIS
 
-#     bookings = Booking.objects.filter(student=request.user).order_by('-booking_date')
+    bookings = Booking.objects.filter(student=request.user).order_by('-booking_date')
 
-#     return render(request, 'my_bookings.html', {
-#         'bookings': bookings
-#     })
+    return render(request, 'my_bookings.html', {
+        'bookings': bookings
+    })
+
+@login_required
+def cancel_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, student=request.user)
+    booking.delete()
+    messages.success(request, "Booking cancelled successfully!")
+    return redirect('my_bookings')
