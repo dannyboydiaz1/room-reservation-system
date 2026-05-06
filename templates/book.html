@@ -1,36 +1,113 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-4">Book a Room</h2>
 
-<form method="POST" class="card p-4 shadow-sm">
-  {% csrf_token %}
+<h2 class="page-title">Book a Room</h2>
 
-  <div class="mb-3">
-    <label class="form-label">Room</label>
-    <select name="room" class="form-select">
-      {% for room in rooms %}
-        <option value="{{ room.id }}">{{ room.room_name }}</option>
-      {% endfor %}
-    </select>
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    
+    <form method="POST" class="card p-4 shadow-lg border-0 rounded-4">
+      {% csrf_token %}
+
+      <!-- ROOM -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Select Room</label>
+        <select name="room" class="form-select">
+          {% for room in rooms %}
+            <option value="{{ room.id }}">{{ room.room_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- DATE -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Date</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="bi bi-calendar-event"></i>
+          </span>
+          <input type="text" id="datePicker" name="date" class="form-control" placeholder="Select Date" required readonly>
+        </div>
+      </div>
+
+      <!-- START TIME -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Start Time</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="bi bi-clock"></i>
+          </span>
+          <input type="text" id="startTime" name="start" class="form-control" placeholder="Start Time" required readonly>
+        </div>
+      </div>
+
+      <!-- END TIME -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">End Time</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="bi bi-clock-history"></i>
+          </span>
+          <input type="text" id="endTime" name="end" class="form-control" placeholder="End Time" required readonly>
+        </div>
+      </div>
+
+      <!-- BUTTON -->
+      <button class="btn btn-primary w-100 py-2 fw-semibold book-btn">
+        <span class="btn-text">Confirm Booking</span>
+        <span class="spinner-border spinner-border-sm d-none"></span>
+      </button>
+
+    </form>
+
   </div>
+</div>
 
-  <div class="mb-3">
-    <label>Date</label>
-    <input type="date" name="date" class="form-control">
-  </div>
+<!-- FLATPICKR CONFIG -->
+<script>
+  // Initialize pickers and store them
+  const datePicker = flatpickr("#datePicker", {
+    minDate: "today",
+    dateFormat: "Y-m-d"
+  });
 
-  <div class="mb-3">
-    <label>Start Time</label>
-    <input type="time" name="start" class="form-control">
-  </div>
+  const startPicker = flatpickr("#startTime", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true
+  });
 
-  <div class="mb-3">
-    <label>End Time</label>
-    <input type="time" name="end" class="form-control">
-  </div>
+  const endPicker = flatpickr("#endTime", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true
+  });
 
-  <button class="btn btn-success">Confirm Booking</button>
-</form>
+  // Make icons clickable (THIS IS WHAT YOU WERE MISSING)
+  const icons = document.querySelectorAll('.input-group-text');
+
+  icons[0].addEventListener('click', () => datePicker.open());
+  icons[1].addEventListener('click', () => startPicker.open());
+  icons[2].addEventListener('click', () => endPicker.open());
+
+  // Also make clicking the input open it (better UX)
+  document.getElementById('datePicker').addEventListener('click', () => datePicker.open());
+  document.getElementById('startTime').addEventListener('click', () => startPicker.open());
+  document.getElementById('endTime').addEventListener('click', () => endPicker.open());
+
+  // Button animation
+  document.querySelector('.book-btn').addEventListener('click', function() {
+      const text = this.querySelector('.btn-text');
+      const spinner = this.querySelector('.spinner-border');
+
+      text.textContent = "Booking...";
+      spinner.classList.remove('d-none');
+
+      this.classList.add('disabled');
+  });
+</script>
 
 {% endblock %}

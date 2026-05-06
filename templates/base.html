@@ -5,20 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Reservation</title>
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Icons + Calendar -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* UTRGV Orange Theme */
+        .navbar {
+            background: linear-gradient(90deg, #ff7a00, #ff9a3c);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .btn-primary {
+            background-color: #ff7a00;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #e66a00;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(255,122,0,0.25);
+        }
+
+        .page-title {
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        /* Alert animation */
+        .animate-pop {
+            animation: popIn 0.4s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Flatpickr styling */
+        .flatpickr-day.selected {
+            background: #ff7a00;
+            border-color: #ff7a00;
+        }
+
+        .flatpickr-day:hover {
+            background: #ff9a3c;
+        }
+
+        /* Clickable icons */
+        .input-group-text {
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
     <a class="navbar-brand" href="/">Room Reservation</a>
 
-    <div>
+    <div class="d-flex align-items-center">
       {% if user.is_authenticated %}
-        <a href="/my-bookings/" class="btn btn-outline-light btn-sm me-2">
+        <a href="/my-bookings/" class="btn btn-light btn-sm me-2">
             My Bookings
         </a>
 
@@ -30,11 +110,11 @@
             Logout
         </a>
       {% else %}
-        <a href="/login/" class="btn btn-outline-light btn-sm me-2">
+        <a href="/login/" class="btn btn-light btn-sm me-2">
             Login
         </a>
 
-        <a href="/register/" class="btn btn-warning btn-sm">
+        <a href="/register/" class="btn btn-dark btn-sm">
             Register
         </a>
       {% endif %}
@@ -48,7 +128,7 @@
     <!-- Django Messages -->
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show animate-pop" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -61,8 +141,61 @@
 
 </div>
 
-<!-- Bootstrap JS (for alerts, buttons, etc.) -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Flatpickr FIRST -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Safe JS (runs only if booking page exists) -->
+<script>
+  if (document.getElementById("datePicker")) {
+
+    const datePicker = flatpickr("#datePicker", {
+      minDate: "today",
+      dateFormat: "Y-m-d"
+    });
+
+    const startPicker = flatpickr("#startTime", {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true
+    });
+
+    const endPicker = flatpickr("#endTime", {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true
+    });
+
+    const icons = document.querySelectorAll('.input-group-text');
+
+    if (icons.length >= 3) {
+      icons[0].onclick = () => datePicker.open();
+      icons[1].onclick = () => startPicker.open();
+      icons[2].onclick = () => endPicker.open();
+    }
+
+    document.getElementById('datePicker').onclick = () => datePicker.open();
+    document.getElementById('startTime').onclick = () => startPicker.open();
+    document.getElementById('endTime').onclick = () => endPicker.open();
+  }
+
+  const btn = document.querySelector('.book-btn');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      const text = this.querySelector('.btn-text');
+      const spinner = this.querySelector('.spinner-border');
+
+      text.textContent = "Booking...";
+      spinner.classList.remove('d-none');
+
+      this.classList.add('disabled');
+    });
+  }
+</script>
 
 </body>
 </html>

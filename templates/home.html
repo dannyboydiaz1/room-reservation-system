@@ -1,24 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-4">Available Study Rooms</h2>
 
-<div class="row">
-  {% for room in rooms %}
-    <div class="col-md-4">
-      <div class="card mb-3 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">{{ room.room_name }}</h5>
-          <p class="card-text">
-            Location: {{ room.location }}<br>
-            Capacity: {{ room.capacity }}
-          </p>
+<h2 class="page-title">Available Study Rooms</h2>
 
-          <a href="/book/" class="btn btn-primary">Book</a>
+<div class="row g-4">
+    {% for room in rooms %}
+    <div class="col-md-4 col-lg-3">
+        <div class="card p-3 shadow-sm">
+            <h5 class="fw-bold">{{ room.room_name }}</h5>
+
+            <p class="text-muted mb-1">
+                📍 {{ room.location }}
+            </p>
+
+            <p class="text-muted mb-3">
+                👥 Capacity: {{ room.capacity }}
+            </p>
+
+            <a href="/book/" class="btn btn-primary w-100 book-btn">
+              <span class="btn-text">Book Room</span>
+              <span class="spinner-border spinner-border-sm d-none"></span>
+          </a>
+    
         </div>
-      </div>
     </div>
-  {% endfor %}
+    {% endfor %}
 </div>
 
 {% endblock %}
